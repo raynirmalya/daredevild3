@@ -1,1 +1,3 @@
-<dfive-pie [chartData]="chartData"></dfive-pie>
+<button (click)="generateImage()">Generate Image</button>
+<button (click)="generatePdf()">Generate PDF</button>
+<dfive-pie [chartData]="chartData" #dfivepie (sendSvg)="sendSvg($event)"></dfive-pie>

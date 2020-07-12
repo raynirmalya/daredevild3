@@ -5,7 +5,9 @@ import {
   SimpleChanges,
   ViewChild,
   ElementRef,
-  AfterViewInit
+  AfterViewInit,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { ChartConfig } from './chart-config.model';
 import * as d3 from 'd3';
@@ -17,6 +19,7 @@ import * as _ from 'lodash';
 })
 export class PieComponent implements OnChanges, AfterViewInit {
   @Input() chartConfig: ChartConfig;
+  @Output() sendSvg: EventEmitter<string> = new EventEmitter<string>();
   @Input() chartData: any;
   @ViewChild('chart', { static: true }) chartElement: ElementRef;
   private defaultWidth = 200;
@@ -120,10 +123,10 @@ export class PieComponent implements OnChanges, AfterViewInit {
     })
       .transition()
       .delay((d, i) => {
-        return i * 200;
+        return i * 170;
       })
       .attrTween('d', d => {
-        const i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
+        const i = d3.interpolate(d.startAngle + 0.5, d.endAngle);
         return t => {
           d.endAngle = i(t);
           return outerThis.arc(d);
@@ -131,6 +134,9 @@ export class PieComponent implements OnChanges, AfterViewInit {
       })
       .attr('stroke', 'white')
       .attr('stroke-width', '2px');
+    setTimeout(() => {
+      this.sendSvg.emit(this.chartElement.nativeElement.innerHTML);
+    }, 2000);
   }
   private createChart() {
     d3.select(this.chartElement.nativeElement).html('');
